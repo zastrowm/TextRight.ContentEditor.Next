@@ -67,15 +67,6 @@ class TextBlock extends Block {
     element.insertBefore(span.getElement(), element.lastElementChild);
   }
 
-  insertText(position: number, text: string) {
-    // get the latest position
-    this.findContainingSpan(position);
-
-    let relativeInsertionPoint = position - this._offsetToLastEditedSpan;
-
-    this._lastElementThatTextWasInsertedInto.insertText(relativeInsertionPoint, text);
-  }
-
   getElement(): HTMLElement {
     return this._element;
   }

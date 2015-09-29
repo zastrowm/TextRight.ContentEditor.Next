@@ -19,49 +19,6 @@ describe("A TextBlock", () => {
     })
   });
 
-  describe("when inserting text", () => {
-    it("allows inserting text into the first span", () => {
-      textBlock.insertText(0, "some text");
-      expect(textBlock.spans[0].getText()).toBe("some text");
-    })
-
-    describe("when inserting text into the first span that already has text", () => {
-
-      const insertedText = "{existing}";
-      const existingTextLength = insertedText.length;
-
-      beforeEach(() => {
-        var span = textBlock.spans[0];
-        span.insertText(0, insertedText);
-      })
-
-      it("can insert text into the begining", () => {
-        textBlock.insertText(0, "prefix");
-        expect(textBlock.spans[0].getText()).toBe("prefix{existing}");
-      })
-
-      it("can insert text onto the end", () => {
-        textBlock.insertText(existingTextLength, "suffix");
-        expect(textBlock.spans[0].getText()).toBe("{existing}suffix");
-      })
-
-      it("can insert text into the middle", () => {
-        textBlock.insertText(2, "|123|");
-        expect(textBlock.spans[0].getText()).toBe("{e|123|xisting}");
-      })
-    })
-
-    describe("with multiple text spans", () => {
-
-      beforeEach(() => {
-        var span = new TextSpan();
-        span.insertText(0, "2");
-        textBlock.insertSpan(0, span);
-      })
-
-    });
-  })
-
   describe("when inserting text spans", () => {
 
     var first: TextSpan;

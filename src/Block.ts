@@ -78,10 +78,11 @@ class InsertTextIntoBlockEvent implements IUndoEvent {
 
   do(owner: DocumentOwner, textblock: TextBlock = null) {
     textblock = UndoHelpers.getTextBlock(owner, textblock, this.insertBlockId);
-    textblock.insertText(this.characterInsertionIndex, this.textToInsert);
+    // TODO
   }
 
   undo(owner: DocumentOwner) {
     let textBlock = UndoHelpers.getTextBlock(owner, null, this.insertBlockId);
+    // TODO
   }
 }
