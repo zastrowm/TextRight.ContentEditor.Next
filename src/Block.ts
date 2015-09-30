@@ -5,6 +5,11 @@ declare class UniqueId {
 };
 
 
+enum BlockType {
+  TextBlock,
+  ContainerBlock,
+}
+
 /** A block of content within the document. */
 abstract class Block {
 
@@ -17,7 +22,7 @@ abstract class Block {
   /**
     * Gets the path to the block.  This path uniquely defines this block for the
     * current state of the document.
-  **/
+   **/
   public getPath(): UniqueId {
 
     var current = this;
@@ -33,6 +38,9 @@ abstract class Block {
 
   /* Get the html element that is associated with the block */
   public abstract getElement(): HTMLElement;
+
+  /* Get the type of the given block */
+  public abstract getBlockType(): BlockType;
 }
 
 /**
@@ -68,6 +76,11 @@ class ContainerBlock extends Block {
 
   getElement(): HTMLElement {
     return this._element;
+  }
+
+  /* inheritdocs */
+  public getBlockType(): BlockType {
+    return BlockType.ContainerBlock;
   }
 }
 

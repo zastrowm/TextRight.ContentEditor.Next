@@ -29,7 +29,14 @@ class TextBlock extends Block {
     this.resetLastEdittedValue();
   }
 
-  insertSpan(position: number, span: TextSpan) {
+  public removeSpan(span: TextSpan) {
+    this.spans.splice(span.childIndex, 1);
+    this._element.removeChild(span.getElement());
+    span.parent = null;
+    span.childIndex = -1;
+  }
+
+  public insertSpan(position: number, span: TextSpan) {
     if (position < 0 || position > this.spans.length) {
       throw new Error("position is out of range");
     }
@@ -67,8 +74,14 @@ class TextBlock extends Block {
     element.insertBefore(span.getElement(), element.lastElementChild);
   }
 
-  getElement(): HTMLElement {
+  /* inheritdocs */
+  public getElement(): HTMLElement {
     return this._element;
+  }
+
+  /* inheritdocs */
+  public getBlockType(): BlockType {
+    return BlockType.ContainerBlock;
   }
 
   private resetLastEdittedValue() {

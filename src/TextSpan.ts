@@ -1,4 +1,5 @@
 ﻿
+
 class TextSpan {
 
   private _element: HTMLElement;
@@ -18,6 +19,14 @@ class TextSpan {
 
   public getElement(): HTMLElement {
     return this._element;
+  }
+
+  public getPreviousSpan(): TextSpan {
+    return this.parent.spans[this.childIndex - 1];
+  }
+
+  public getNextSpan(): TextSpan {
+    return this.parent.spans[this.childIndex + 1];
   }
 
   insertText(relativeInsertionPoint: number, text: string) {
