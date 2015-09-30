@@ -81,7 +81,7 @@ class TextBlock extends Block {
 
   /* inheritdocs */
   public getBlockType(): BlockType {
-    return BlockType.ContainerBlock;
+    return BlockType.TextBlock;
   }
 
   private resetLastEdittedValue() {

@@ -15,7 +15,7 @@ class DocumentCursor {
   public moveForwardInBlock(): boolean {
     switch (this.targetBlock.getBlockType()) {
       case BlockType.TextBlock:
-        return this.moveFowardInTextBlock();
+        return this.moveForwardInTextBlock();
       default:
         throw new Error("Block not supported");
     }
@@ -30,7 +30,7 @@ class DocumentCursor {
     }
   }
 
-  private moveFowardInTextBlock() {
+  private moveForwardInTextBlock() {
     const inline = this.targetInline;
 
     if (this.offset < inline.length) {
