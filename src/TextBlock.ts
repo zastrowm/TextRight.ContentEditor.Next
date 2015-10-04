@@ -1,4 +1,5 @@
 ﻿
+/* A block that only contains text spans */
 class TextBlock extends Block {
 
   private _element: HTMLParagraphElement;
@@ -27,6 +28,53 @@ class TextBlock extends Block {
     this._element.appendChild(this._end);
 
     this.resetLastEdittedValue();
+  }
+
+  public moveCursorForwardInBlock(cursor: DocumentCursor): boolean {
+    const inline = cursor.targetInline as TextSpan;
+
+    if (cursor.offset < inline.length) {
+      cursor.offset++;
+      return true;
+    } else if (inline.childIndex + 1 < inline.parent.spans.length) {
+      cursor.targetInline = inline.getNextSpan();
+      cursor.offset = 1;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public moveCursorBackwardInBlock(cursor: DocumentCursor): boolean {
+    const inline = cursor.targetInline as TextSpan;
+
+    if (cursor.offset > 2) {
+      cursor.offset--;
+      return true;
+    } else if ( /* not at beginning of first block */ cursor.offset === 1 && inline.childIndex !== 0) {
+      cursor.targetInline = inline.getPreviousSpan();
+      cursor.offset = inline.length;
+      return true;
+    } else if ( /* at beginning of first span */ cursor.offset === 0) {
+      return false;
+    } else { /* at offset 1 of first span */
+      cursor.offset -= 1;
+      return true;
+    }
+  }
+
+  public setCursorToBeginningOfBlock(cursor: DocumentCursor): void {
+    cursor.targetBlock = this;
+    cursor.targetInline = this.spans[0];
+    cursor.offset = 0;
+  }
+
+  public setCursorToEndOfBlock(cursor: DocumentCursor): void {
+    var lastSpan = this.spans[this.spans.length - 1];
+
+    cursor.targetBlock = this;
+    cursor.targetInline = lastSpan;
+    cursor.offset = lastSpan.length;
   }
 
   public removeSpan(span: TextSpan) {

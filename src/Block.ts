@@ -17,11 +17,47 @@ abstract class Block {
   public childId: number;
 
   /** The parent of the current block. */
-  public parent: Block;
+  public parent: ContainerBlock;
+
+  /* Get the html element that is associated with the block */
+  public abstract getElement(): HTMLElement;
+
+  /* Get the type of the given block */
+  public abstract getBlockType(): BlockType;
+
+  public abstract moveCursorForwardInBlock(cursor: DocumentCursor): boolean;
+  public abstract moveCursorBackwardInBlock(cursor: DocumentCursor): boolean;
+
+  public abstract setCursorToBeginningOfBlock(cursor: DocumentCursor): void;
+  public abstract setCursorToEndOfBlock(cursor: DocumentCursor): void;
+
+  public isFirst(): boolean {
+    return this.parent == null || this.childId == 0;
+  }
+
+  public isLast(): boolean {
+    return this.parent == null || this.childId === this.parent.children.length - 1;
+  }
+
+  public getPreviousBlock(): Block {
+    if (this.parent != null && this.childId != 0) {
+      return this.parent.children[this.childId - 1];
+    }
+
+    return null;
+  }
+
+  public getNextBlock(): Block {
+    if (this.parent != null && this.childId != this.parent.children.length - 1) {
+      return this.parent[this.childId + 1];
+    }
+
+    return null;
+  }
 
   /**
-    * Gets the path to the block.  This path uniquely defines this block for the
-    * current state of the document.
+   * Gets the path to the block.  This path uniquely defines this block for the
+   * current state of the document.
    **/
   public getPath(): UniqueId {
 
@@ -35,12 +71,6 @@ abstract class Block {
 
     return path;
   }
-
-  /* Get the html element that is associated with the block */
-  public abstract getElement(): HTMLElement;
-
-  /* Get the type of the given block */
-  public abstract getBlockType(): BlockType;
 }
 
 /**
@@ -74,6 +104,25 @@ class ContainerBlock extends Block {
     // no need to renumber because we added to the end
   }
 
+  public moveCursorForwardInBlock(cursor: DocumentCursor): boolean {
+    throw new Error("not implemented");
+    return false; // TODO
+  }
+
+  public moveCursorBackwardInBlock(cursor: DocumentCursor): boolean {
+    throw new Error("not implemented");
+    return false; // TODO
+  }
+
+  public setCursorToBeginningOfBlock(cursor: DocumentCursor): void {
+    throw new Error("not implemented");
+  }
+
+  public setCursorToEndOfBlock(cursor: DocumentCursor): void {
+    throw new Error("not implemented");
+  }
+
+    /* inheritdocs */
   getElement(): HTMLElement {
     return this._element;
   }
@@ -81,21 +130,5 @@ class ContainerBlock extends Block {
   /* inheritdocs */
   public getBlockType(): BlockType {
     return BlockType.ContainerBlock;
-  }
-}
-
-class InsertTextIntoBlockEvent implements IUndoEvent {
-  insertBlockId: UniqueId;
-  characterInsertionIndex: number;
-  textToInsert: string;
-
-  do(owner: DocumentOwner, textblock: TextBlock = null) {
-    textblock = UndoHelpers.getTextBlock(owner, textblock, this.insertBlockId);
-    // TODO
-  }
-
-  undo(owner: DocumentOwner) {
-    let textBlock = UndoHelpers.getTextBlock(owner, null, this.insertBlockId);
-    // TODO
   }
 }
