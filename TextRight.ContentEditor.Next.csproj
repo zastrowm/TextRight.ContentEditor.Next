@@ -31,7 +31,7 @@
     <Content Include="lib\jasmine\jasmine.js" />
     <Content Include="lib\jasmine\jasmine_favicon.png" />
     <Content Include="lib\live.js" />
-    <Content Include="test\Tests.html" />
+    <Content Include="Tests.html" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -39,10 +39,12 @@
     <TypeScriptCompile Include="src\app.ts" />
     <TypeScriptCompile Include="src\Block.ts" />
     <TypeScriptCompile Include="lib\es6.d.ts" />
+    <TypeScriptCompile Include="src\DocumentCursor.ts" />
     <TypeScriptCompile Include="src\DocumentOwner.ts" />
     <TypeScriptCompile Include="src\TextBlock.ts" />
     <TypeScriptCompile Include="src\TextSpan.ts" />
     <TypeScriptCompile Include="src\Undo.ts" />
+    <TypeScriptCompile Include="test\DocumentCursor.Tests.ts" />
     <TypeScriptCompile Include="test\TextBlock.Tests.ts" />
     <TypeScriptCompile Include="test\TextSpan.Tests.ts" />
   </ItemGroup>
