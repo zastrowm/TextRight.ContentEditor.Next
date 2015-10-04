@@ -1,10 +1,62 @@
 ﻿
+function getFirstNonContainerBlock(block: Block): Block {
+
+  while (block instanceof ContainerBlock) {
+    block = (block as ContainerBlock).children[0];
+  }
+
+  return block;
+}
+
+function getLastNonContainerBlock(block: Block): Block {
+
+  while (block instanceof ContainerBlock) {
+    var array = (block as ContainerBlock).children;
+    block = array[array.length - 1];
+  }
+
+  return block;
+}
+
+function getNextBlock(block: Block): Block {
+
+  while (true) {
+    var nextBlock = block.getNextBlock();
+
+    if (nextBlock != null) {
+      return getFirstNonContainerBlock(block);
+    }
+
+    if (block.parent == null) {
+      return null;
+    }
+
+    block = block.parent;
+  }
+}
+
+function getPreviousBlock(block: Block): Block {
+  while (true) {
+    var previousBlock = block.getPreviousBlock();
+
+    if (previousBlock != null) {
+      return getLastNonContainerBlock(block);
+    }
+
+    if (block.parent == null) {
+      return null;
+    }
+
+    block = block.parent;
+  }
+}
+
 
 class DocumentCursor {
 
   public targetBlock: Block;
 
-  public targetInline: TextSpan;
+  public targetInline: any;
 
   public offset: number;
 
@@ -12,54 +64,45 @@ class DocumentCursor {
 
   }
 
+  /** Move forward through the document, navigating through blocks if required */
+  public moveForward(): boolean {
+    if (this.moveForwardInBlock()) {
+      return true;
+    }
+
+    var next = getNextBlock(this.targetBlock);
+
+    if (next != null) {
+      next.setCursorToBeginningOfBlock(this);
+      return true;
+    }
+
+    return false;
+  }
+
+  /** Move backward through the document, navigating through blocks if required */
+  public moveBackward(): boolean {
+    if (this.moveBackwardInBlock()) {
+      return true;
+    }
+
+    var prev = getPreviousBlock(this.targetBlock);
+
+    if (prev != null) {
+      prev.setCursorToEndOfBlock(this);
+      return true;
+    }
+
+    return false;
+  }
+
+  /** Move forward through the document staying within the current block */
   public moveForwardInBlock(): boolean {
-    switch (this.targetBlock.getBlockType()) {
-      case BlockType.TextBlock:
-        return this.moveForwardInTextBlock();
-      default:
-        throw new Error("Block not supported");
-    }
+    return this.targetBlock.moveCursorForwardInBlock(this);
   }
 
+  /** Move backward through the document staying within the current block */
   public moveBackwardInBlock(): boolean {
-    switch (this.targetBlock.getBlockType()) {
-      case BlockType.TextBlock:
-        return this.moveBackwardInTextBlock();
-      default:
-        throw new Error("Block not supported");
-    }
-  }
-
-  private moveForwardInTextBlock() {
-    const inline = this.targetInline;
-
-    if (this.offset < inline.length) {
-      this.offset++;
-      return true;
-    } else if (inline.childIndex + 1 < inline.parent.spans.length) {
-      this.targetInline = inline.getNextSpan();
-      this.offset = 1;
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private moveBackwardInTextBlock(): boolean {
-    const inline = this.targetInline;
-
-    if (this.offset > 2) {
-      this.offset--;
-      return true;
-    } else if ( /* not at begining of first block */ this.offset === 1 && inline.childIndex !== 0) {
-      this.targetInline = this.targetInline.getPreviousSpan();
-      this.offset = this.targetInline.length;
-      return true;
-    } else if ( /* at begining of first span */ this.offset === 0) {
-      return false;
-    } else { /* at offset 1 of first span */
-      this.offset -= 1;
-      return true;
-    }
+    return this.targetBlock.moveCursorBackwardInBlock(this);
   }
 }
