@@ -1,6 +1,5 @@
 ﻿// ReSharper disable StatementIsNotTerminated
 
-
 describe("A TextBlock", () => {
 
   let textBlock: TextBlock;

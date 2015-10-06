@@ -44,4 +44,11 @@ class TextSpan {
   getText() {
     return this._element.textContent;
   }
+
+  private dump(): any {
+    return {
+      childIndex: this.childIndex,
+      text: this.getText(),
+    };
+  }
 }

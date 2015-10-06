@@ -1,67 +1,17 @@
 ﻿
-function getFirstNonContainerBlock(block: Block): Block {
-
-  while (block instanceof ContainerBlock) {
-    block = (block as ContainerBlock).children[0];
-  }
-
-  return block;
-}
-
-function getLastNonContainerBlock(block: Block): Block {
-
-  while (block instanceof ContainerBlock) {
-    var array = (block as ContainerBlock).children;
-    block = array[array.length - 1];
-  }
-
-  return block;
-}
-
-function getNextBlock(block: Block): Block {
-
-  while (true) {
-    var nextBlock = block.getNextBlock();
-
-    if (nextBlock != null) {
-      return getFirstNonContainerBlock(block);
-    }
-
-    if (block.parent == null) {
-      return null;
-    }
-
-    block = block.parent;
-  }
-}
-
-function getPreviousBlock(block: Block): Block {
-  while (true) {
-    var previousBlock = block.getPreviousBlock();
-
-    if (previousBlock != null) {
-      return getLastNonContainerBlock(block);
-    }
-
-    if (block.parent == null) {
-      return null;
-    }
-
-    block = block.parent;
-  }
-}
-
 
 class DocumentCursor {
 
   public targetBlock: Block;
 
-  public targetInline: any;
+  public blockSpecificData: any;
 
   public offset: number;
 
-  constructor() {
-
+  constructor(targetBlock: Block = null, blockSpecificData: any = null, offset: number = 0) {
+    this.targetBlock = targetBlock;
+    this.blockSpecificData = blockSpecificData;
+    this.offset = 0;
   }
 
   /** Move forward through the document, navigating through blocks if required */
@@ -70,7 +20,22 @@ class DocumentCursor {
       return true;
     }
 
-    var next = getNextBlock(this.targetBlock);
+    return this.moveForwardToNextBlock();
+  }
+
+  /** Move backward through the document, navigating through blocks if required */
+  public moveBackward(): boolean {
+    if (this.moveBackwardInBlock()) {
+      return true;
+    }
+
+    return this.moveBackwardToPreviousBlock();
+  }
+
+
+  /** Move to the beginning of the next block in the document tree. */
+  public moveForwardToNextBlock(): boolean {
+    var next = TreeNavigator.getNextNonContainerBlockInTree(this.targetBlock);
 
     if (next != null) {
       next.setCursorToBeginningOfBlock(this);
@@ -80,13 +45,9 @@ class DocumentCursor {
     return false;
   }
 
-  /** Move backward through the document, navigating through blocks if required */
-  public moveBackward(): boolean {
-    if (this.moveBackwardInBlock()) {
-      return true;
-    }
-
-    var prev = getPreviousBlock(this.targetBlock);
+  /** Move to the end of the previous block in the document tree. */
+  public moveBackwardToPreviousBlock(): boolean {
+    var prev = TreeNavigator.getPreviousNonContainerBlockInTree(this.targetBlock);
 
     if (prev != null) {
       prev.setCursorToEndOfBlock(this);

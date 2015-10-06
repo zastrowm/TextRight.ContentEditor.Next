@@ -4,7 +4,6 @@ declare class UniqueId {
 
 };
 
-
 enum BlockType {
   TextBlock,
   ContainerBlock,
@@ -26,9 +25,11 @@ abstract class Block {
   public abstract getBlockType(): BlockType;
 
   public abstract moveCursorForwardInBlock(cursor: DocumentCursor): boolean;
+
   public abstract moveCursorBackwardInBlock(cursor: DocumentCursor): boolean;
 
   public abstract setCursorToBeginningOfBlock(cursor: DocumentCursor): void;
+
   public abstract setCursorToEndOfBlock(cursor: DocumentCursor): void;
 
   public isFirst(): boolean {
@@ -48,8 +49,8 @@ abstract class Block {
   }
 
   public getNextBlock(): Block {
-    if (this.parent != null && this.childId != this.parent.children.length - 1) {
-      return this.parent[this.childId + 1];
+    if (this.parent != null && this.childId !== this.parent.children.length - 1) {
+      return this.parent.children[this.childId + 1];
     }
 
     return null;
@@ -71,6 +72,8 @@ abstract class Block {
 
     return path;
   }
+
+
 }
 
 /**
@@ -82,11 +85,19 @@ class ContainerBlock extends Block {
 
   public children: Block[];
 
-  constructor() {
+  constructor(children: Block[] | Block) {
     super();
 
     this.children = [];
     this._element = document.createElement("DIV");
+
+    if (Array.isArray(children)) {
+      this.appendChildren(children);
+    } else if (children instanceof Block) {
+      this.appendChild(children);
+    } else {
+      throw new Error("Container cannot be created without a child");
+    }
   }
 
   private renumberChildren() {
@@ -102,6 +113,12 @@ class ContainerBlock extends Block {
     block.parent = this;
     block.childId = this.children.length - 1;
     // no need to renumber because we added to the end
+  }
+
+  public appendChildren(children: Block[]) {
+    for (let child of children) {
+      this.appendChild(child);
+    }
   }
 
   public moveCursorForwardInBlock(cursor: DocumentCursor): boolean {
@@ -122,7 +139,7 @@ class ContainerBlock extends Block {
     throw new Error("not implemented");
   }
 
-    /* inheritdocs */
+  /* inheritdocs */
   getElement(): HTMLElement {
     return this._element;
   }

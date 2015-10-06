@@ -6,8 +6,7 @@
   private _root: ContainerBlock;
 
   constructor() {
-    this._root = new ContainerBlock();
-    this._root.appendChild(new TextBlock());
+    this._root = new ContainerBlock(new TextBlock());
   }
 
   attachTo(element: HTMLElement) {

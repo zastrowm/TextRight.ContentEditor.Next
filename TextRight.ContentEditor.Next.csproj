@@ -43,6 +43,7 @@
     <TypeScriptCompile Include="src\DocumentOwner.ts" />
     <TypeScriptCompile Include="src\TextBlock.ts" />
     <TypeScriptCompile Include="src\TextSpan.ts" />
+    <TypeScriptCompile Include="src\TreeNavigator.ts" />
     <TypeScriptCompile Include="src\Undo.ts" />
     <TypeScriptCompile Include="test\DocumentCursor.Tests.ts" />
     <TypeScriptCompile Include="test\TextBlock.Tests.ts" />

@@ -11,7 +11,7 @@ class TextBlock extends Block {
 
   public spans: TextSpan[];
 
-  constructor() {
+  constructor(text?: string) {
     super();
 
     this._element = document.createElement("p");
@@ -28,16 +28,20 @@ class TextBlock extends Block {
     this._element.appendChild(this._end);
 
     this.resetLastEdittedValue();
+
+    if (text != null) {
+      this.spans[0].insertText(0, text);
+    }
   }
 
   public moveCursorForwardInBlock(cursor: DocumentCursor): boolean {
-    const inline = cursor.targetInline as TextSpan;
+    const inline = <TextSpan>cursor.blockSpecificData;
 
     if (cursor.offset < inline.length) {
       cursor.offset++;
       return true;
     } else if (inline.childIndex + 1 < inline.parent.spans.length) {
-      cursor.targetInline = inline.getNextSpan();
+      cursor.blockSpecificData = inline.getNextSpan();
       cursor.offset = 1;
       return true;
     } else {
@@ -46,13 +50,13 @@ class TextBlock extends Block {
   }
 
   public moveCursorBackwardInBlock(cursor: DocumentCursor): boolean {
-    const inline = cursor.targetInline as TextSpan;
+    const inline = <TextSpan>cursor.blockSpecificData;
 
     if (cursor.offset > 2) {
       cursor.offset--;
       return true;
     } else if ( /* not at beginning of first block */ cursor.offset === 1 && inline.childIndex !== 0) {
-      cursor.targetInline = inline.getPreviousSpan();
+      cursor.blockSpecificData = inline.getPreviousSpan();
       cursor.offset = inline.length;
       return true;
     } else if ( /* at beginning of first span */ cursor.offset === 0) {
@@ -65,7 +69,7 @@ class TextBlock extends Block {
 
   public setCursorToBeginningOfBlock(cursor: DocumentCursor): void {
     cursor.targetBlock = this;
-    cursor.targetInline = this.spans[0];
+    cursor.blockSpecificData = this.spans[0];
     cursor.offset = 0;
   }
 
@@ -73,7 +77,7 @@ class TextBlock extends Block {
     var lastSpan = this.spans[this.spans.length - 1];
 
     cursor.targetBlock = this;
-    cursor.targetInline = lastSpan;
+    cursor.blockSpecificData = lastSpan;
     cursor.offset = lastSpan.length;
   }
 
@@ -130,6 +134,18 @@ class TextBlock extends Block {
   /* inheritdocs */
   public getBlockType(): BlockType {
     return BlockType.TextBlock;
+  }
+
+  public toString() {
+    return this.getElement().textContent;
+  }
+
+  private dump() {
+    return {
+      childId: this.childId,
+      spanCount: this.spans.length,
+      text: this.getElement().textContent
+    }
   }
 
   private resetLastEdittedValue() {
