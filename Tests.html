@@ -6,9 +6,28 @@
   <link type="image/png" href="lib/jasmine/jasmine_favicon.png" rel="shortcut icon">
   <link type="text/css" href="lib/jasmine/jasmine.css" rel="stylesheet">
 
+  <script src="lib/jquery-2.1.4.min.js"></script>
   <script src="lib/jasmine/jasmine.js"></script>
   <script src="lib/jasmine/jasmine-html.js"></script>
   <script src="lib/jasmine/boot.js"></script>
+
+  <script>
+    var original = jasmine.pp;
+    jasmine.pp = function(obj) {
+      if (obj != null && typeof obj == "object" && 'dump' in obj) {
+        return JSON.stringify(obj.dump(), undefined, 0);
+      } else {
+        return original(obj);
+      }
+    };
+
+    // hide tests that were not run
+    jasmine.getEnv().addReporter({
+      jasmineDone: function() {
+        $(".disabled").parents(".suite").hide();
+      }
+    });
+  </script>
 
   <script src="lib/live.js"></script>
 
