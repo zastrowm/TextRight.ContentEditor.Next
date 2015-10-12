@@ -30,6 +30,7 @@
     <Content Include="lib\jasmine\jasmine.css" />
     <Content Include="lib\jasmine\jasmine.js" />
     <Content Include="lib\jasmine\jasmine_favicon.png" />
+    <Content Include="lib\jquery-2.1.4.min.js" />
     <Content Include="lib\live.js" />
     <Content Include="Tests.html" />
     <Content Include="web.config" />
