@@ -19,13 +19,13 @@ module UndoHelpers {
 
 class UndoStack {
 
-  public add(undoEvent: IUndoEvent): void {
+  public add(undoEvent: IUndoAction): void {
     // TODO 
   }
 
 }
 
-interface IUndoEvent {
-  do(owner: DocumentOwner): void;
-  undo(owner: DocumentOwner): void;
+interface IUndoAction {
+  do(owner: DocumentOwner, cursor: DocumentCursor): void;
+  undo(owner: DocumentOwner, cursor: DocumentCursor): void;
 }

@@ -18,8 +18,12 @@
     return this._undoStack;
   }
 
-  public getBlock(id: UniqueId): Block {
+  public getBlock<TBlock>(id: UniqueId): TBlock {
     // TODO actually get the block associated with the given id
     return null;
+  }
+
+  public performAndEnqueue(cursor: DocumentCursor, undoAction: IUndoAction) {
+    // TODO actually perform the action and add it to the undo queue
   }
 }

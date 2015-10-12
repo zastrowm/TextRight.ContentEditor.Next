@@ -32,6 +32,10 @@ abstract class Block {
 
   public abstract setCursorToEndOfBlock(cursor: DocumentCursor): void;
 
+  public abstract serializeBlockSpecificData(cursor: DocumentCursor): any;
+
+  public abstract deserializeBlockSpecificData(cursor: DocumentCursor, data: any);
+
   public isFirst(): boolean {
     return this.parent == null || this.childId == 0;
   }
@@ -136,6 +140,14 @@ class ContainerBlock extends Block {
   }
 
   public setCursorToEndOfBlock(cursor: DocumentCursor): void {
+    throw new Error("not implemented");
+  }
+
+  public serializeBlockSpecificData(cursor: DocumentCursor): any {
+    throw new Error("not implemented");
+  }
+
+  public deserializeBlockSpecificData(cursor: DocumentCursor, data: any) {
     throw new Error("not implemented");
   }
 

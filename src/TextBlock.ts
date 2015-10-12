@@ -6,8 +6,8 @@ class TextBlock extends Block {
   private _start: HTMLSpanElement;
   private _end: HTMLSpanElement;
 
-  private _lastElementThatTextWasInsertedInto: TextSpan;
-  private _offsetToLastEditedSpan;
+  private _lastCachedSpan: TextSpan = null;
+  private _offsetToLastCachedSpan = 0;
 
   public spans: TextSpan[];
 
@@ -27,13 +27,14 @@ class TextBlock extends Block {
     this._element.appendChild(firstSpan.getElement());
     this._element.appendChild(this._end);
 
-    this.resetLastEdittedValue();
-
     if (text != null) {
       this.spans[0].insertText(0, text);
     }
+
+    this.resetLastCachedSpan();
   }
 
+  /* inheritdocs */
   public moveCursorForwardInBlock(cursor: DocumentCursor): boolean {
     const inline = <TextSpan>cursor.blockSpecificData;
 
@@ -49,6 +50,7 @@ class TextBlock extends Block {
     }
   }
 
+  /* inheritdocs */
   public moveCursorBackwardInBlock(cursor: DocumentCursor): boolean {
     const inline = <TextSpan>cursor.blockSpecificData;
 
@@ -67,12 +69,14 @@ class TextBlock extends Block {
     }
   }
 
+  /* inheritdocs */
   public setCursorToBeginningOfBlock(cursor: DocumentCursor): void {
     cursor.targetBlock = this;
     cursor.blockSpecificData = this.spans[0];
     cursor.offset = 0;
   }
 
+  /* inheritdocs */
   public setCursorToEndOfBlock(cursor: DocumentCursor): void {
     var lastSpan = this.spans[this.spans.length - 1];
 
@@ -81,11 +85,21 @@ class TextBlock extends Block {
     cursor.offset = lastSpan.length;
   }
 
-  public removeSpan(span: TextSpan) {
-    this.spans.splice(span.childIndex, 1);
-    this._element.removeChild(span.getElement());
-    span.parent = null;
-    span.childIndex = -1;
+  /* inheritdocs */
+  public serializeBlockSpecificData(cursor: DocumentCursor): any {
+    let span: TextSpan = cursor.blockSpecificData;
+
+    var offset = this.calculateOffset(span) + cursor.offset;
+    return offset;
+  }
+
+  /* inheritdocs */
+  public deserializeBlockSpecificData(cursor: DocumentCursor, data: number) {
+    let targetSpan = this.getSpanAtOffset(data);
+    let relativeOffset = data - this._offsetToLastCachedSpan;
+
+    cursor.blockSpecificData = targetSpan;
+    cursor.offset = relativeOffset;
   }
 
   public insertSpan(position: number, span: TextSpan) {
@@ -115,8 +129,14 @@ class TextBlock extends Block {
       this.updateChildrenNumbering(current.childIndex);
     }
 
-    // TODO update any cursors attached to this block
-    this.resetLastEdittedValue();
+    this.resetLastCachedSpan();
+  }
+
+  public removeSpan(span: TextSpan) {
+    this.spans.splice(span.childIndex, 1);
+    this._element.removeChild(span.getElement());
+    span.parent = null;
+    span.childIndex = -1;
   }
 
   private appendSpan(span: TextSpan) {
@@ -148,39 +168,84 @@ class TextBlock extends Block {
     }
   }
 
-  private resetLastEdittedValue() {
-    this._lastElementThatTextWasInsertedInto = this.spans[0];
-    this._offsetToLastEditedSpan = 0;
+  private updateChildrenNumbering(startIndex: number = 0) {
+    for (var i = startIndex; i < this.spans.length; i++) {
+      this.spans[i].childIndex = i;
+    }
   }
 
-  private findContainingSpan(position: number): void {
-    let relativeInsertionPoint = position - this._offsetToLastEditedSpan;
+  private resetLastCachedSpan() {
+    this._lastCachedSpan = this.spans[0];
+    this._offsetToLastCachedSpan = 0;
+  }
 
-    let isTextInLastEditedSpan = this._offsetToLastEditedSpan < position
-      && relativeInsertionPoint <= this._lastElementThatTextWasInsertedInto.length;
-
-    if (isTextInLastEditedSpan) {
-      // we're already there, yay
-      return;
+  private calculateOffset(targetSpan: TextSpan): number {
+    if (this._lastCachedSpan === targetSpan) {
+      return this._offsetToLastCachedSpan;
     }
+
+    // make sure that we don't start the loop before already AFTER the
+    // target block
+    if (targetSpan.childIndex < this._lastCachedSpan.childIndex) {
+      this.resetLastCachedSpan();
+    }
+
+    let currentOffset = this._offsetToLastCachedSpan;
+    let index = this._lastCachedSpan.childIndex + 1;
+    let span = this.spans[index];
+
+    while (span !== targetSpan) {
+      currentOffset += span.length;
+      index++;
+      span = this.spans[index];
+    }
+
+    this._lastCachedSpan = span;
+    this._offsetToLastCachedSpan = currentOffset;
+
+    return this._offsetToLastCachedSpan;
+  }
+
+  private getSpanAtOffset(offset: number): TextSpan {
+    let relativeInsertionPoint = offset - this._offsetToLastCachedSpan;
+
+    let isTextInLastEditedSpan = this._offsetToLastCachedSpan < offset
+      && relativeInsertionPoint <= this._lastCachedSpan.length;
+
+    if (isTextInLastEditedSpan)
+      return this._lastCachedSpan;
 
     let currentOffset = 0;
 
     let span: TextSpan = this.spans[0];
     for (var i = 0; i < this.spans.length; i++) {
       span = this.spans[i];
-      if (position >= currentOffset) {
+      if (offset >= currentOffset) {
         currentOffset += span.length;
       }
     }
 
-    this._offsetToLastEditedSpan = currentOffset;
-    this._lastElementThatTextWasInsertedInto = span;
+    this._offsetToLastCachedSpan = currentOffset;
+    this._lastCachedSpan = span;
+    return this._lastCachedSpan;
+  }
+}
+
+
+/**
+ * An action that inserts text into a text block
+ */
+class InsertTextAction implements IUndoAction {
+
+  constructor(private text: string) {
+
   }
 
-  private updateChildrenNumbering(startIndex: number = 0) {
-    for (var i = startIndex; i < this.spans.length; i++) {
-      this.spans[i].childIndex = i;
-    }
+  public do(owner: DocumentOwner, cursor: DocumentCursor) {
+    (<TextSpan>cursor.blockSpecificData).insertText(cursor.offset, this.text);
+  }
+
+  public undo(owner: DocumentOwner, cursor: DocumentCursor) {
+    (<TextSpan>cursor.blockSpecificData).removeText(cursor.offset, this.text.length);
   }
 }
