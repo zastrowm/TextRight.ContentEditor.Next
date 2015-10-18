@@ -8,6 +8,7 @@
 
   <script src="lib/live.js"></script>
 
+  <script src="src/Editing/EventHandlers.js"></script>
   <script src="src/Undo.js"></script>
   <script src="src/DocumentOwner.js"></script>
   <script src="src/TreeNavigator.js"></script>
@@ -15,8 +16,22 @@
   <script src="src/TextBlock.js"></script>
   <script src="src/TextSpan.js"></script>
   <script src="src/DocumentCursor.js"></script>
+  <script src="src/Editing/InputProcessor.js"></script>
+  <script src="src/Editing/DocumentEditor.js"></script>
 
-  <script src="src/app.js"></script>
+  <script>
+
+    window.onload = function() {
+      var contentElement = document.getElementById('document');
+
+      var originalText = contentElement.textContent;
+
+      var editor = new TextRight.ContentEditor.DocumentEditor();
+      editor.owner.attachTo(contentElement);
+
+      editor.owner.root.children[0].spans[0].insertText(0, originalText);
+    };
+  </script>
 
 </head>
 <body>

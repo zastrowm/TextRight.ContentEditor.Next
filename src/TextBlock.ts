@@ -236,11 +236,10 @@ namespace TextRight.ContentEditor {
     }
   }
 
-
   /**
    * An action that inserts text into a text block
    */
-  class InsertTextAction implements IUndoAction {
+  export class InsertTextAction implements IUndoAction {
 
     constructor(private text: string) {
 

@@ -37,11 +37,13 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="def\jasmine.d.ts" />
-    <TypeScriptCompile Include="src\app.ts" />
     <TypeScriptCompile Include="src\Block.ts" />
     <TypeScriptCompile Include="lib\es6.d.ts" />
     <TypeScriptCompile Include="src\DocumentCursor.ts" />
+    <TypeScriptCompile Include="src\Editing\DocumentEditor.ts" />
     <TypeScriptCompile Include="src\DocumentOwner.ts" />
+    <TypeScriptCompile Include="src\Editing\EventHandlers.ts" />
+    <TypeScriptCompile Include="src\Editing\InputProcessor.ts" />
     <TypeScriptCompile Include="src\TextBlock.ts" />
     <TypeScriptCompile Include="src\TextSpan.ts" />
     <TypeScriptCompile Include="src\TreeNavigator.ts" />
