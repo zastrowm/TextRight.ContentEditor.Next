@@ -13,7 +13,7 @@ namespace TextRight.ContentEditor {
       span = block.spans[0];
       span.insertText(0, "123");
 
-      cursor = new DocumentCursor();
+      cursor = new DocumentCursor(null);
       cursor.targetBlock = block;
       cursor.blockSpecificData = span;
       cursor.offset = 0;
@@ -159,7 +159,7 @@ namespace TextRight.ContentEditor {
         c = new TextBlock("last");
         root = new ContainerBlock([a, b, c]);
 
-        cursor = new DocumentCursor();
+        cursor = new DocumentCursor(null);
         cursor.targetBlock = a;
         cursor.blockSpecificData = a.spans[0];
         cursor.offset = 0;
@@ -209,7 +209,7 @@ namespace TextRight.ContentEditor {
       });
 
       it("moves from one block to previous block", () => {
-        cursor = new DocumentCursor(b, b.spans[0], 0);
+        cursor = new DocumentCursor(null, b, b.spans[0], 0);
 
         let result = cursor.moveBackwardToPreviousBlock();
         expect(result).toBe(true);
@@ -219,7 +219,7 @@ namespace TextRight.ContentEditor {
       });
 
       it("points to end of previous block when moving backwards in blocks", () => {
-        cursor = new DocumentCursor(b, b.spans[0], 0);
+        cursor = new DocumentCursor(null, b, b.spans[0], 0);
 
         let result = cursor.moveBackwardToPreviousBlock();
         expect(result).toBe(true);
@@ -230,7 +230,7 @@ namespace TextRight.ContentEditor {
       })
 
       it("moves across multiple blocks when iterating backwards", () => {
-        cursor = new DocumentCursor(c, c.spans[0], 0);
+        cursor = new DocumentCursor(null, c, c.spans[0], 0);
 
         let result = cursor.moveBackwardToPreviousBlock();
         expect(result).toBe(true);
@@ -271,7 +271,7 @@ namespace TextRight.ContentEditor {
       }
 
       beforeEach(() => {
-        cursor = new DocumentCursor();
+        cursor = new DocumentCursor(null);
 
         root = createFromObject({
           b: {

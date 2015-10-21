@@ -12,7 +12,7 @@ namespace TextRight.ContentEditor {
 
     public offset: number;
 
-    constructor(targetBlock: Block = null, blockSpecificData: any = null, offset: number = 0) {
+    constructor(owner: DocumentOwner, targetBlock: Block = null, blockSpecificData: any = null, offset: number = 0) {
       this.targetBlock = targetBlock;
       this.blockSpecificData = blockSpecificData;
       this.offset = 0;

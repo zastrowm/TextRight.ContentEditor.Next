@@ -16,7 +16,7 @@ module TextRight.ContentEditor {
     constructor() {
 
       this.owner = new DocumentOwner();
-      this.caretPosition = new DocumentCursor();
+      this.caretPosition = new DocumentCursor(this.owner);
 
       this.owner.root.children[0].setCursorToBeginningOfBlock(this.caretPosition);
 
