@@ -51,6 +51,8 @@ namespace TextRight.ContentEditor.Input {
     private mouseMove: IEventHandler;
     private mouseUp: IEventHandler;
 
+    private shortcutManager = new KeyboardShortcutManager();
+
     constructor(
       private _editor: DocumentEditor,
       private _documentELement: HTMLElement,
@@ -171,6 +173,13 @@ namespace TextRight.ContentEditor.Input {
 
     /** Handle the case where the user pressed a key down. */
     private handleKeyDown(evt: KeyboardEvent) {
+
+      let shortcut = this.shortcutManager.lookup(evt);
+
+      if (shortcut != null) {
+        shortcut.action();
+        evt.preventDefault();
+      }
 
       //var isCtrlDown = evt.ctrlKey;
       //var shouldExtendSelections = evt.shiftKey;

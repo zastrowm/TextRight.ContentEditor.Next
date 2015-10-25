@@ -2,8 +2,8 @@
 namespace TextRight.ContentEditor {
 
   /**
-   * A single, continuous span of text that has a single style and is
-   * part of a larger text span. 
+   * A single, continuous span of _text that has a single style and is
+   * part of a larger _text span. 
    */
   export class TextSpan {
 
@@ -35,7 +35,7 @@ namespace TextRight.ContentEditor {
     }
 
     /**
-     * Insert text into the span at the designated location.
+     * Insert _text into the span at the designated location.
      */
     public insertText(relativeInsertionPoint: number, text: string) {
       let element = this._element;
@@ -69,7 +69,7 @@ namespace TextRight.ContentEditor {
     }
 
     /**
-     * Get the text contained in the given span. 
+     * Get the _text contained in the given span. 
      */
     public getText() {
       // PROFILE - should we cache this?
