@@ -235,22 +235,4 @@ namespace TextRight.ContentEditor {
       return this._lastCachedSpan;
     }
   }
-
-  /**
-   * An action that inserts text into a text block
-   */
-  export class InsertTextAction implements IUndoAction {
-
-    constructor(private text: string) {
-
-    }
-
-    public do(owner: DocumentOwner, cursor: DocumentCursor) {
-      (<TextSpan>cursor.blockSpecificData).insertText(cursor.offset, this.text);
-    }
-
-    public undo(owner: DocumentOwner, cursor: DocumentCursor) {
-      (<TextSpan>cursor.blockSpecificData).removeText(cursor.offset, this.text.length);
-    }
-  }
 }

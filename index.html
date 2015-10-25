@@ -16,7 +16,9 @@
   <script src="src/TextBlock.js"></script>
   <script src="src/TextSpan.js"></script>
   <script src="src/DocumentCursor.js"></script>
+
   <script src="src/Editing/InputProcessor.js"></script>
+  <script src="src/Editing/Actions.js"></script>
   <script src="src/Editing/DocumentEditor.js"></script>
 
   <script>
@@ -30,6 +32,8 @@
       editor.owner.attachTo(contentElement);
 
       editor.owner.root.children[0].spans[0].insertText(0, originalText);
+
+      document.querySelector("input").focus();
     };
   </script>
 

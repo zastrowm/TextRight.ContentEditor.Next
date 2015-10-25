@@ -40,6 +40,7 @@
     <TypeScriptCompile Include="src\Block.ts" />
     <TypeScriptCompile Include="lib\es6.d.ts" />
     <TypeScriptCompile Include="src\DocumentCursor.ts" />
+    <TypeScriptCompile Include="src\Editing\Actions.ts" />
     <TypeScriptCompile Include="src\Editing\DocumentEditor.ts" />
     <TypeScriptCompile Include="src\DocumentOwner.ts" />
     <TypeScriptCompile Include="src\Editing\EventHandlers.ts" />

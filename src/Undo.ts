@@ -28,7 +28,7 @@ namespace TextRight.ContentEditor {
   }
 
   export interface IUndoAction {
-    do(owner: DocumentOwner, cursor: DocumentCursor): void;
-    undo(owner: DocumentOwner, cursor: DocumentCursor): void;
+    do(cursor: DocumentCursor): void;
+    undo(cursor: DocumentCursor): void;
   }
 }

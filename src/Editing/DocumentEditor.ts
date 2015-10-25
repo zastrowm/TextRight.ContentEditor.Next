@@ -30,7 +30,7 @@ module TextRight.ContentEditor {
 
     public insertText(text: string): void {
       var action = new TextRight.ContentEditor.InsertTextAction(text);
-      action.do(this.owner, this.caretPosition);
+      action.do(this.caretPosition);
     }
 
   }
