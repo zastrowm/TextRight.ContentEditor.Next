@@ -81,6 +81,12 @@ namespace TextRight.ContentEditor.Input {
 
       // TODO reduce interval when we can (exponential back off?)
       setInterval(() => this.readInput(), 50);
+
+      this.shortcutManager.add({
+        keyCode: KeyboardConstants.backspace,
+        modifiers: ModifierKeyState.None,
+        action: () => _editor.execute(new DeletePreviousCharacter())
+      })
     }
 
     public readInput(): boolean {
